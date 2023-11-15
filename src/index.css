@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Billabong';
+    src: url('./assets/FontsFree-Net-Billabong.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
