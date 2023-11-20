@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-export const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBFgOmkZBJxHfQniLljd6RX9Ec__og_MNc",
   authDomain: "instagram-clone-4fc51.firebaseapp.com",
   projectId: "instagram-clone-4fc51",
@@ -13,7 +13,7 @@ export const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase authentication
 // eslint-disable-next-line no-unused-vars

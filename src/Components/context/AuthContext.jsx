@@ -1,23 +1,62 @@
 /* eslint-disable react/prop-types */
-import { useContext, createContext } from "react";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useContext, createContext, useEffect, useState } from "react";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import { auth } from "../../firebase";
 
-const AuthContext = createContext();
+const UserContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+  const [user, setUser] = useState({});
+
+  //! Creating a new user
+  const createUser = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  //! Logging in a user
+  const loginUser = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  //! Checking the auth state of the user
+  useEffect(() => {
+    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log(currentUser);
+      setUser(currentUser);
+    });
+
+    return () => {
+      unSubscribe();
+    };
+  }, []);
+
+  //! Logging out the user
+  const logoutUser = () => {
+    return signOut(auth);
+  };
+
+  //! Google Provider Sign in
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider);
-    // signInWithRedirect(auth, provider);
   };
+
   return (
-    <AuthContext.Provider value={{ googleSignIn }}>
+    <UserContext.Provider
+      value={{ createUser, loginUser, logoutUser, user, googleSignIn }}
+    >
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   );
 };
 
 export const UserAuth = () => {
-  return useContext(AuthContext);
+  return useContext(UserContext);
 };

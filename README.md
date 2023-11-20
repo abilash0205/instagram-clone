@@ -1,5 +1,4 @@
 # Instagram Clone
-> Using Iframe for reels
 
 # Tech Stacks
 > Frontend - React JS

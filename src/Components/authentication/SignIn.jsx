@@ -1,55 +1,32 @@
-import { useState } from "react";
-import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
 import GoogleButton from "react-google-button";
 import { UserAuth } from "../context/AuthContext";
 import authImage from "../../assets/authenticateImage.png";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-// import { ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { loginUser } = UserAuth();
+  const navigate = useNavigate();
 
-  const signIn = (e) => {
+  const loginExistingUser = async (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        alert("Logged in successfully");
-
-        // toast.success("Logged in successfully", {
-        //   position: toast.POSITION.TOP_CENTER,
-        //   autoClose: 5000,
-        //   hideProgressBar: false,
-        //   closeOnClick: true,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: undefined,
-        //   theme: "light",
-        // });
-      })
-      .catch((error) => {
-        const statusSection = document.getElementById("status");
-        statusSection.innerText = error.code.slice(5);
-        setTimeout(() => {
-          statusSection.innerText = "";
-        }, 4500);
-        
-        // toast.success(`${error}`, {
-        //   position: toast.POSITION.TOP_CENTER,
-        //   autoClose: 5000,
-        //   hideProgressBar: false,
-        //   closeOnClick: true,
-        //   pauseOnHover: true,
-        //   draggable: true,
-        //   progress: undefined,
-        //   theme: "light",
-        // });
-      });
+    try {
+      await loginUser(email, password);
+      alert("Logged in successfully");
+      navigate("/homepage");
+    } catch (error) {
+      const statusSection = document.getElementById("status");
+      statusSection.innerText = error.code.slice(5);
+      setTimeout(() => {
+        statusSection.innerText = "";
+      }, 4500);
+    }
   };
 
-  const { googleSignIn } = UserAuth();
+  const { googleSignIn, user } = UserAuth();
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
@@ -58,9 +35,15 @@ const SignIn = () => {
     }
   };
 
+  useEffect(() => {
+    if (user !== null){
+      navigate('/homepage')
+    }
+  }, [navigate, user])
+
   return (
     <Container>
-      <Row>
+      <Row className="h-screen flex justify-center items-center gap-1">
         <Col md={6} className="mx-auto">
           <img className="mx-auto" src={authImage} width={"400px"} />
         </Col>
@@ -71,11 +54,7 @@ const SignIn = () => {
           >
             Instagram
           </h1>
-          <Form
-            onSubmit={signIn}
-            style={{ width: "300px" }}
-            className="mx-auto"
-          >
+          <Form onSubmit={loginExistingUser} className="mx-auto max-w-[300px]">
             <Form.Group className="my-4">
               <Form.Label>Email Address</Form.Label>
               <Form.Control

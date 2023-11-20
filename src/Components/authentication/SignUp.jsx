@@ -1,37 +1,47 @@
-import { useState } from "react";
-import { auth } from "../../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import GoogleButton from "react-google-button";
 import { UserAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const { createUser } = UserAuth();
+  const navigate = useNavigate();
 
-  const signUp = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     validateInputs();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        alert(`Account created successfully as ${userCredential.user.email}`);
-      })
-      .catch((error) => {
-        const success = document.getElementById("alert-message");
-        success.innerText = error;
-      });
+    setDisplayName("");
+    setEmail("");
+    setPassword("");
+    try {
+      await createUser(email, password);
+      alert("Account created successfully");
+      navigate("/homepage");
+    } catch (error) {
+      const success = document.getElementById("alert-message");
+      success.innerText = error.message;
+    }
   };
 
-  const { googleSignIn } = UserAuth();
+  const { googleSignIn, user } = UserAuth();
   const handleGoogleSignIn = async () => {
     try {
       await googleSignIn();
+      navigate("/homepage");
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (user !== null) {
+      navigate("/homepage");
+    }
+  }, [navigate, user]);
 
   function validateInputs() {
     const userName = document.getElementById("userName").value.trim();
@@ -68,11 +78,10 @@ const SignUp = () => {
   };
 
   return (
-    <Container>
+    <Container className="h-screen flex justify-center items-center">
       <Form
-        onSubmit={signUp}
-        className="mx-auto text-center border-2"
-        style={{ width: "350px" }}
+        onSubmit={handleSubmit}
+        className="mx-auto text-center border-2 max-w-[320px]"
       >
         <h1 style={{ fontFamily: "Billabong" }} className="text-5xl m-2">
           Instagram
@@ -119,7 +128,7 @@ const SignUp = () => {
         </p>
 
         <Button
-          className="text-dark w-80 btn my-4"
+          className="text-dark w-72 btn my-4"
           variant="primary"
           type="submit"
         >
@@ -127,14 +136,13 @@ const SignUp = () => {
         </Button>
         <p className="m-1">
           Have an account?{" "}
-          <Link className="text-primary" to="/signin">
+          <Link className="text-primary" to="/">
             Log in
           </Link>
         </p>
-        <span id="alert-message"></span>
+        <span id="alert-message" className="text-danger"></span>
       </Form>
     </Container>
   );
 };
-
 export default SignUp;
