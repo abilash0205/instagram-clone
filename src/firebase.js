@@ -1,15 +1,24 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"
+import { getAuth } from "firebase/auth";
+import {
+  YOUR_API_KEY,
+  YOUR_AUTH_DOMAIN,
+  YOUR_PROJECT_ID,
+  YOUR_STORAGE_BUCKET,
+  YOUR_MESSAGING_SENDER_ID,
+  YOUR_APP_ID,
+  YOUR_MEASUREMENT_ID,
+} from "../config";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBFgOmkZBJxHfQniLljd6RX9Ec__og_MNc",
-  authDomain: "instagram-clone-4fc51.firebaseapp.com",
-  projectId: "instagram-clone-4fc51",
-  storageBucket: "instagram-clone-4fc51.appspot.com",
-  messagingSenderId: "18590257521",
-  appId: "1:18590257521:web:c48a3765a2b65f85a626d0",
-  measurementId: "G-JL1V0GFLVH"
+  apiKey: YOUR_API_KEY,
+  authDomain: YOUR_AUTH_DOMAIN,
+  projectId: YOUR_PROJECT_ID,
+  storageBucket: YOUR_STORAGE_BUCKET,
+  messagingSenderId: YOUR_MESSAGING_SENDER_ID,
+  appId: YOUR_APP_ID,
+  measurementId: YOUR_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -17,4 +26,4 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase authentication
 // eslint-disable-next-line no-unused-vars
-export const auth = getAuth(app)
+export const auth = getAuth(app);
